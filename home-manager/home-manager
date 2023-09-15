@@ -166,12 +166,6 @@ function setHomeManagerPathVariables() {
     declare -gr HM_STATE_DIR="$stateHome/home-manager"
     declare -gr HM_GCROOT_LEGACY_PATH="$globalGcrootsDir/current-home"
 
-    # fix for missing profile directory in new installations of nix v2.17.0
-    # https://github.com/nix-community/home-manager/issues/4403
-    if [[ ! -d $userNixStateDir/profiles && ! -d $globalProfilesDir ]]; then
-        $(nix-env -q >/dev/null 2>&1) 
-    fi
-
     if [[ -d $userNixStateDir/profiles ]]; then
         declare -gr HM_PROFILE_DIR="$userNixStateDir/profiles"
     elif [[ -d $globalProfilesDir ]]; then
@@ -951,8 +945,6 @@ COMMAND=""
 COMMAND_ARGS=()
 FLAKE_ARG=""
 
-setHomeManagerPathVariables
-
 while [[ $# -gt 0 ]]; do
     opt="$1"
     shift
@@ -1052,6 +1044,12 @@ if [[ -z $COMMAND ]]; then
     doHelp >&2
     exit 1
 fi
+
+case $COMMAND in
+generations | expire-generations | remove-generations | uninstall)
+    setHomeManagerPathVariables
+    ;;
+esac
 
 case $COMMAND in
     edit)
