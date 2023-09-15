@@ -164,7 +164,7 @@ function setHomeManagerPathVariables() {
 
     declare -gr HM_DATA_HOME="${XDG_DATA_HOME:-$HOME/.local/share}/home-manager"
     declare -gr HM_STATE_DIR="$stateHome/home-manager"
-    declare -gr HM_GCROOT_LEGACY_PATH="$globalGcrootsDir/current-home"
+    declare -gr HM_GCROOT_LEGACY_PATH="$globalGcrootsDir/current-home" ## ?? doUninstall()
 
     # fix for missing profile directory in new installations of nix v2.17.0
     # https://github.com/nix-community/home-manager/issues/4403
@@ -175,7 +175,7 @@ function setHomeManagerPathVariables() {
     if [[ -d $userNixStateDir/profiles ]]; then
         declare -gr HM_PROFILE_DIR="$userNixStateDir/profiles"
     elif [[ -d $globalProfilesDir ]]; then
-        declare -gr HM_PROFILE_DIR="$globalProfilesDir"
+        declare -gr HM_PROFILE_DIR="$globalProfilesDir" ## ?? doListGens() && doUninstall() && doExpireGenerations() && doRmGenerations()
     else
         _iError 'Could not find suitable profile directory, tried %s and %s' \
                 "$HM_STATE_DIR/profiles" "$globalProfilesDir" >&2
